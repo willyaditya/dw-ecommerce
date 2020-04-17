@@ -23,6 +23,12 @@ class Category extends Model
         return $this->hasMany(Category::class, 'parent_id');
     }
 
+    public function product()
+    {
+        //JENIS RELASINYA ADALAH ONE TO MANY, YANG BERARTI KATEGORI INI BISA DIGUNAKAN OLEH BANYAK PRODUK
+        return $this->hasMany(Product::class);
+    }
+
     //UNTUK LOCAL SCOPE NAMA METHODNYA DIAWAL DENGAN KATA scope DAN DIIKUTI DENGAN NAMA METHOD YANG DIINGINKAN
     //CONTOH: scopeNamaMethod()
     public function scopeGetParent($query)

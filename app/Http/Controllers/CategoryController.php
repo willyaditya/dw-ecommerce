@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -29,16 +30,6 @@ class CategoryController extends Controller
         //LOAD VIEW DARI FOLDER CATEGORIES, DAN DIDALAMNYA ADA FILE INDEX.BLADE.PHP
         //KEMUDIAN PASSING DATA DARI VARIABLE $category & $parent KE VIEW AGAR DAPAT DIGUNAKAN PADA VIEW TERKAIT
         return view('categories.index', compact('category', 'parent'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -68,17 +59,6 @@ class CategoryController extends Controller
         //DAN MEMBUAT FLASH SESSION MENGGUNAKAN WITH()
         //JADI WITH() DISINI BERBEDA FUNGSINYA DENGAN WITH() YANG DISAMBUNGKAN DENGAN MODEL
         return redirect(route('category.index'))->with(['success' => 'Kategori Baru Ditambahkan!']);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Category $category)
-    {
-        //
     }
 
     /**
@@ -121,7 +101,8 @@ class CategoryController extends Controller
         //POSISI KANAN ADALAH VALUE DARI FORM EDIT
         $category->update([
             'name' => $request->name,
-            'parent_id' => $request->parent_id
+            'parent_id' => $request->parent_id,
+            'slug' => Str::slug($request->name)
         ]);
 
         //REDIRECT KE HALAMAN LIST KATEGORI
@@ -140,9 +121,9 @@ class CategoryController extends Controller
         //ADAPUN withCount() SERUPA DENGAN EAGER LOADING YANG MENGGUNAKAN with()
         //HANYA SAJA withCount() RETURNNYA ADALAH INTEGER
         //JADI NNTI HASIL QUERYNYA AKAN MENAMBAHKAN FIELD BARU BERNAMA child_count YANG BERISI JUMLAH DATA ANAK KATEGORI
-        $category = Category::withCount(['child'])->find($id);
+        $category = Category::withCount(['child, product'])->find($id);
         //JIKA KATEGORI INI TIDAK DIGUNAKAN SEBAGAI PARENT ATAU CHILDNYA = 0
-        if ($category->child_count == 0) {
+        if ($category->child_count == 0 && $category->product_count == 0) {
             //MAKA HAPUS KATEGORI INI
             $category->delete();
             //DAN REDIRECT KEMBALI KE HALAMAN LIST KATEGORI
