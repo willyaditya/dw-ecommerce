@@ -13,11 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
+
+Route::get('/', 'Ecommerce\FrontController@index')->name('front.index');
+Route::get('/product', 'Ecommerce\FrontController@product')->name('front.product');
 
 //JADI INI GROUPING ROUTE, SEHINGGA SEMUA ROUTE YANG ADA DIDALAMNYA
 //SECARA OTOMATIS AKAN DIAWALI DENGAN administrator
